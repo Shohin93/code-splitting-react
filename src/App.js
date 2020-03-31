@@ -1,12 +1,13 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, lazy, Suspense} from 'react';
 
-import AsyncComponent from './components/AsyncComponent';
 import Page1 from './components/Page1';
 import './App.css';
 
+const Page2 = lazy(() => import('./components/Page2'));
+const Page3 = lazy(() => import('./components/Page3'));
+
 export default class App extends Component {
   state = {
-    component: null,
     route: 'route1'
   };
 
@@ -17,11 +18,17 @@ export default class App extends Component {
     if (route === 'route1') {
       return <Page1 onRouteChange={this.onRouteChange} />;
     } else if (route === 'route2') {
-      const Page2 = AsyncComponent(() => import('./components/Page2'));
-      return <Page2 onRouteChange={this.onRouteChange} />
+      return (
+        <Suspense fallback={<div />}>
+          <Page2 onRouteChange={this.onRouteChange} />
+        </Suspense>
+      );
     } else if (route === 'route3') {
-      const Page3 = AsyncComponent(() => import('./components/Page3'));
-      return <Page3 onRouteChange={this.onRouteChange} />
+      return (
+        <Suspense fallback={<div />}>
+          <Page3 onRouteChange={this.onRouteChange} />
+        </Suspense>
+      );
     }
   }
 }
