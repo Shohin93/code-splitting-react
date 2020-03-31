@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 
+import AsyncComponent from './components/AsyncComponent';
 import Page1 from './components/Page1';
 import './App.css';
 
@@ -9,30 +10,18 @@ export default class App extends Component {
     route: 'route1'
   };
 
-  onRouteChange = route => {
-    if (route === 'route1') {
-      this.setState({route});
-    } else if (route === 'route2') {
-      import('./components/Page2').then(component => {
-        this.setState({
-          component: component.default,
-          route
-        })
-      });
-    } else if (route === 'route3') {
-      import('./components/Page3').then(component => {
-        this.setState({
-          component: component.default,
-          route
-        })
-      });
-    }
-  }  
+  onRouteChange = route => this.setState({route});
 
   render() {
-    return this.state.route === 'route1' ?
-      <Page1 onRouteChange={this.onRouteChange} /> 
-      :
-      <this.state.component onRouteChange={this.onRouteChange} />
+    const {route} = this.state;
+    if (route === 'route1') {
+      return <Page1 onRouteChange={this.onRouteChange} />;
+    } else if (route === 'route2') {
+      const Page2 = AsyncComponent(() => import('./components/Page2'));
+      return <Page2 onRouteChange={this.onRouteChange} />
+    } else if (route === 'route3') {
+      const Page3 = AsyncComponent(() => import('./components/Page3'));
+      return <Page3 onRouteChange={this.onRouteChange} />
+    }
   }
 }
