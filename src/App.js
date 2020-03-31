@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
+
+import Page1 from './components/Page1';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+export default class App extends Component {
+  state = {
+    component: null,
+    route: 'route1'
+  };
 
-export default App;
+  onRouteChange = route => {
+    if (route === 'route1') {
+      this.setState({route});
+    } else if (route === 'route2') {
+      import('./components/Page2').then(component => {
+        this.setState({
+          component: component.default,
+          route
+        })
+      });
+    } else if (route === 'route3') {
+      import('./components/Page3').then(component => {
+        this.setState({
+          component: component.default,
+          route
+        })
+      });
+    }
+  }  
+
+  render() {
+    return this.state.route === 'route1' ?
+      <Page1 onRouteChange={this.onRouteChange} /> 
+      :
+      <this.state.component onRouteChange={this.onRouteChange} />
+  }
+}
